@@ -31,7 +31,8 @@ POST_JSON = {
     'productClassString':'Crude Oils',
     'productNameString':'Crude oil (RVP 5)'}
 
-url = 'http://127.0.0.1:5000/api'
+url = 'https://tanks-409d-api.herokuapp.com/apiv001/vfrt'
 response = r.post(url, json=POST_JSON)
 data = response.text
 data_json = json.loads(data)
+data_json
