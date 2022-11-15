@@ -1,7 +1,8 @@
 import math
-from sqlite3 import connect
-import sqlite3
+import os 
+import numpy as np
 import pandas as pd
+import sqlite3
 
 class VerticalFixedRoofTank:
     
@@ -18,7 +19,7 @@ class VerticalFixedRoofTank:
     # TODO: Look into the use of tb for a non-insulated tank.
     '''
     
-    conn = sqlite3.connect('tanks-4-09-data.db', check_same_thread=False)
+    conn = sqlite3.connect('tanks-4-09-data.db')
 
     def __init__(
         self,
@@ -49,7 +50,9 @@ class VerticalFixedRoofTank:
         averageLiquidHeight, 
         rvp_crudeOils, 
         isCustomProduct, 
-        productMW):
+        productMW, 
+        tankName, 
+        assetNumber):
         
         self.hs_shellHeight = shellHeight
         self.tankDiameter = tankDiameter
@@ -79,6 +82,8 @@ class VerticalFixedRoofTank:
         self.rvp_crudeOils = rvp_crudeOils
         self.isCustomProduct = isCustomProduct
         self.productMW = productMW
+        self.tankName = tankName
+        self.assetNumber = assetNumber
         
         # Get data from db for the location.
         locationString1 = self.location
@@ -344,6 +349,9 @@ class VerticalFixedRoofTank:
                                                           'shell height': self.hs_shellHeight,
                                                           'liquid height': hl_liquidLevel,
                                                           'roof type': self.roofType,
+                                                          'constant': None,
+                                                          'd': self.tankDiameter,
+                                                          'tank_orientation': self.tankOrientation,
                                                           'status': 'Done'}]} 
         elif self.tankOrientation == 'Horizontal':
             # See HVO, in Equation 1-16.
@@ -352,9 +360,21 @@ class VerticalFixedRoofTank:
             result = {'value': hvo_vaporSpaceOutage, 
                       'quantity': 'Vapor Space Outage (hvo)',
                       'equation': '1-16',
-                      'version': '06/2020', 'elements': [{'d': self.tankDiameter, 
-                                                          'constant': 'pi/8', 
-                                                          'status': 'Done'}]}
+                      'version': '06/2020', 
+                      'elements': [{'hs': None, 
+                                  'hl': None, 
+                                  'hro': None, 
+                                  'hr': None,
+                                  'roof slope': None, 
+                                  'roof height': None,
+                                  'shell radius': None,
+                                  'shell height': None,
+                                  'liquid height': None,
+                                  'roof type': None,
+                                  'constant': 'pi/8',
+                                  'd': self.tankDiameter,
+                                  'tank_orientation': self.tankOrientation,
+                                  'status': 'Done'}]} 
         
         else:
             raise ValueError('Incorrect Tank Orientation. \
@@ -768,7 +788,7 @@ class VerticalFixedRoofTank:
                         kb_ventSettingCorrection
         
         return {'quantity': 'workingLoss', 
-                'value': workingLoss,
+                'value': round(workingLoss, 4),
                 'equation': '1-2',
                 'version': '06/2020',
                 'elements': [{'tankOrientation': self.tankOrientation,
@@ -823,6 +843,8 @@ class VerticalFixedRoofTank:
          'roofSlope': self.roofSlope, 
          'isAverageLiquidHeightKnown': self.isAverageLiquidHeightKnown,
          'averageLiquidHeight': self.averageLiquidHeight, 
-         'rvp_crudeOils': self.rvp_crudeOils}
+         'rvp_crudeOils': self.rvp_crudeOils, 
+         'tankName': self.tankName,
+         'assetNumber': self.assetNumber}
 
         return dataDict
