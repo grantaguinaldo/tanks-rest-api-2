@@ -47,6 +47,8 @@ def main():
     INPUT_roofCondition = POST_DATA['roofCondition'] 
     INPUT_productClassString = POST_DATA['productClassString']
     INPUT_productNameString = POST_DATA['productNameString']
+    INPUT_assetNumber = POST_DATA['assetNumber']
+    INPUT_tankName = POST_DATA['tankName']
 
     obj = returnData1(
 
@@ -77,7 +79,9 @@ def main():
             roofShade=INPUT_roofShade,
             roofCondition=INPUT_roofCondition, 
             productClassString=INPUT_productClassString,
-            productNameString=INPUT_productNameString)
+            productNameString=INPUT_productNameString, 
+            tankName=INPUT_tankName, 
+            assetNumber=INPUT_assetNumber)
 
     return jsonify(obj)
 
