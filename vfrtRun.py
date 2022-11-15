@@ -5,64 +5,39 @@ import sqlite3
 import pandas as pd
 from verticalFixedRoofTank import VerticalFixedRoofTank
 
-def returnData1(shellHeight=None, 
-                tankDiameter=None, 
-                tankDomeRoofRadius=None, 
-                breatherPressureSetting=None,
-                breatherVaccumSetting=None,
-                tankLength=None,
-                throughput=None, 
-                roofSlope=None, 
-                averageLiquidHeight=None, 
-                rvp_crudeOils=None,
-                productMW=None,
-                isTankDomeRoofRadiusKnown=None, 
-                isTankOnVaporBalance=None, 
-                isRoofInsulated=None,
-                isShellInsulated=None,   
-                isAverageLiquidHeightKnown=None,
-                isCustomProduct=None,
-                roofType=None,
-                tankOrientation=None, 
-                productType=None, 
-                breatherVentSetting=None,
-                location=None,
-                shellShade=None, 
-                shellCondition=None, 
-                roofShade=None,
-                roofCondition=None, 
-                productClassString=None,
-                productNameString=None):
+def returnData1(productClassString=None,productNameString=None):
         
     obj =   VerticalFixedRoofTank(
-            shellHeight=shellHeight, 
-            tankDiameter=tankDiameter, 
-            tankDomeRoofRadius=tankDomeRoofRadius, 
-            breatherPressureSetting=breatherPressureSetting,
-            breatherVaccumSetting=breatherVaccumSetting,
-            tankLength=tankLength,
-            throughput=throughput, 
-            roofSlope=roofSlope, 
-            averageLiquidHeight=averageLiquidHeight, 
-            rvp_crudeOils=rvp_crudeOils,
-            productMW=productMW,
-            isTankDomeRoofRadiusKnown=isTankDomeRoofRadiusKnown, 
-            isTankOnVaporBalance=isTankOnVaporBalance, 
-            isRoofInsulated=isRoofInsulated,
-            isShellInsulated=isShellInsulated,   
-            isAverageLiquidHeightKnown=isAverageLiquidHeightKnown,
-            isCustomProduct=isCustomProduct,
-            roofType=roofType,
-            tankOrientation=tankOrientation, 
-            productType=productType, 
-            breatherVentSetting=breatherVentSetting,
-            location=location,
-            shellShade=shellShade, 
-            shellCondition=shellCondition, 
-            roofShade=roofShade,
-            roofCondition=roofCondition, 
+            shellHeight=20, 
+            tankDiameter=15, 
+            tankDomeRoofRadius=9, 
+            breatherPressureSetting=0.03,
+            breatherVaccumSetting=-0.03,
+            tankLength=10,
+            throughput=10000, 
+            roofSlope=0.0625, 
+            averageLiquidHeight=10/2, 
+            rvp_crudeOils=5,
+            productMW=50,
+            isTankDomeRoofRadiusKnown=False, 
+            isTankOnVaporBalance=False, 
+            isRoofInsulated=False,
+            isShellInsulated=False,   
+            isAverageLiquidHeightKnown=False,
+            isCustomProduct=False,
+            roofType='Cone',
+            tankOrientation='Vertical', 
+            productType='Crude Oils', 
+            breatherVentSetting='Default',
+            location='Long Beach, CA',
+            shellShade='White', 
+            shellCondition='Average', 
+            roofShade='White',
+            roofCondition='Average', 
             productClassString=productClassString,
-            productNameString=productNameString)
+            productNameString=productNameString,         
+            tankName='North Gas Oil Tank',
+            assetNumber='4209')
 
     a = obj.averageAmbientTempData()
     b = obj.vaporSpaceVolume()
@@ -87,11 +62,11 @@ def returnData1(shellHeight=None,
              {'index': 9, 'method': 'tankInputs', 'data': j}]
     
     #tank dimensions
-    hs = data[3]['data']['elements'][0]['shell height']
+    hs = data[9]['data']['shellHeight']
     d = data[8]['data']['elements'][0]['diameter']
     hlx = data[8]['data']['elements'][0]['hlx']
     hln = data[8]['data']['elements'][0]['hln']
-    hl = data[3]['data']['elements'][0]['hl']
+    hl = data[3]['data']['elements'][0]['hl'] #ok
     n = data[8]['data']['elements'][0]['num_turnovers']
     throughput_gal = data[8]['data']['elements'][0]['q_gal']
     q_bbl = data[8]['data']['elements'][0]['q_bbl']
@@ -104,9 +79,9 @@ def returnData1(shellHeight=None,
     roof_cond = data[0]['data']['roof_condition']
     
     #roof characteristics
-    roof_type = data[3]['data']['elements'][0]['roof type']
+    roof_type = data[9]['data']['roofType']
     hr = data[3]['data']['elements'][0]['hr']
-    slope = data[3]['data']['elements'][0]['roof slope']
+    slope = data[9]['data']['roofSlope']
     
     #Breather Vent
     pbv = data[8]['data']['elements'][0]['breatherVaccumSetting']
@@ -168,15 +143,15 @@ def returnData1(shellHeight=None,
     
     #Vapor Space Outage
     hvo = data[1]['data']['elements'][0]['hvo']
-    hs = data[3]['data']['elements'][0]['shell height']
-    hl = data[3]['data']['elements'][0]['hl']
-    hro = data[3]['data']['elements'][0]['hro']
+    hs = data[9]['data']['shellHeight']
+    hl = data[3]['data']['elements'][0]['hl'] #ok
+    hro = data[3]['data']['elements'][0]['hro'] #ok
     
     #Roof Outage
-    hro = data[3]['data']['elements'][0]['hro']
+    hro = data[3]['data']['elements'][0]['hro'] #ok
     hr = data[3]['data']['elements'][0]['hr']
-    rs = data[3]['data']['elements'][0]['shell radius']
-    sr = data[3]['data']['elements'][0]['roof slope']
+    rs = data[9]['data']['tankDiameter'] / 2.
+    sr = data[9]['data']['roofSlope']
     
     #Vapor Density
     wv = data[8]['data']['elements'][0]['wv']
@@ -201,8 +176,6 @@ def returnData1(shellHeight=None,
     ks = data[2]['data']['value']
     pva = data[2]['data']['elements'][0]['pva']
     hvo = data[2]['data']['elements'][0]['hvo']
-
-    print('Grant')
     
     return_data = {
 
@@ -370,6 +343,39 @@ def returnData1(shellHeight=None,
             'parameter_estimates': [{'parameter_name': 'Vented Vapor Saturation Factor, unitless', 'parameter_symbol': 'ks', 'parameter_value': ks},
                                     {'parameter_name': 'Vapor Pressure at Average Daily Liquid Surface Temp, psia', 'parameter_symbol': 'pva', 'parameter_value': pva},
                                     {'parameter_name': 'Vapor Space Outage, ft', 'parameter_symbol': 'hvo', 'parameter_value': hvo}]
+        }],
+        
+        'data_inputs': [{
+            
+            'value': None,
+            'parameter_estimates': [{'parameter_name': 'hs_shellHeight', 'parameter_symbol': 'g', 'value': data[9]['data']['shellHeight']}, 
+                                    {'parameter_name': 'tankLength', 'parameter_symbol': 'g', 'value': data[9]['data']['tankLength']},
+                                    {'parameter_name': 'tankDiameter', 'parameter_symbol': 'g', 'value': data[9]['data']['tankDiameter']},
+                                    {'parameter_name': 'rr_tankDomeRoofRadius', 'parameter_symbol': 'g', 'value': data[9]['data']['tankDomeRoofRadius']},
+                                    {'parameter_name': 'isTankDomeRoofRadiusKnown', 'parameter_symbol': 'g', 'value': data[9]['data']['isTankDomeRoofRadiusKnown']},
+                                    {'parameter_name': 'isTankOnVaporBalance', 'parameter_symbol': 'g', 'value': data[9]['data']['isTankOnVaporBalance']},
+                                    {'parameter_name': 'roofType', 'parameter_symbol': 'g', 'value': data[9]['data']['roofType']},
+                                    {'parameter_name': 'tankOrientation', 'parameter_symbol': 'g', 'value': data[9]['data']['tankOrientation']},
+                                    {'parameter_name': 'throughput', 'parameter_symbol': 'g', 'value': data[9]['data']['throughput']},
+                                    {'parameter_name': 'productType', 'parameter_symbol': 'g', 'value': data[9]['data']['productType']},
+                                    {'parameter_name': 'breatherVentSetting', 'parameter_symbol': 'g', 'value': data[9]['data']['breatherVentSetting']},
+                                    {'parameter_name': 'breatherPressureSetting', 'parameter_symbol': 'g', 'value': data[9]['data']['breatherPressureSetting']},
+                                    {'parameter_name': 'breatherVaccumSetting', 'parameter_symbol': 'g', 'value': data[9]['data']['breatherVaccumSetting']},
+                                    {'parameter_name': 'location', 'parameter_symbol': 'g', 'value': data[9]['data']['location']},
+                                    {'parameter_name': 'shellShade', 'parameter_symbol': 'g', 'value': data[9]['data']['shellShade']},
+                                    {'parameter_name': 'shellCondition', 'parameter_symbol': 'g', 'value': data[9]['data']['shellCondition']},
+                                    {'parameter_name': 'roofShade', 'parameter_symbol': 'g', 'value': data[9]['data']['roofShade']},
+                                    {'parameter_name': 'roofCondition', 'parameter_symbol': 'g', 'value': data[9]['data']['roofCondition']},
+                                    {'parameter_name': 'isShellInsulated', 'parameter_symbol': 'g', 'value': data[9]['data']['isShellInsulated']},
+                                    {'parameter_name': 'isRoofInsulated', 'parameter_symbol': 'g', 'value': data[9]['data']['isRoofInsulated']},
+                                    {'parameter_name': 'productClassString', 'parameter_symbol': 'g', 'value': data[9]['data']['productClassString']},
+                                    {'parameter_name': 'productNameString', 'parameter_symbol': 'g', 'value': data[9]['data']['productNameString']},
+                                    {'parameter_name': 'roofSlope', 'parameter_symbol': 'g', 'value': data[9]['data']['roofSlope']},
+                                    {'parameter_name': 'isAverageLiquidHeightKnown', 'parameter_symbol': 'g', 'value': data[9]['data']['isAverageLiquidHeightKnown']},
+                                    {'parameter_name': 'averageLiquidHeight', 'parameter_symbol': 'g', 'value': data[9]['data']['averageLiquidHeight']}, 
+                                    {'parameter_name': 'rvp_crudeOils', 'parameter_symbol': 'g', 'value': data[9]['data']['rvp_crudeOils']},
+                                    {'parameter_name': 'tankName', 'parameter_symbol': 'g', 'value': data[9]['data']['tankName']}, 
+                                    {'parameter_name': 'assetNumber', 'parameter_symbol': 'g', 'value': data[9]['data']['assetNumber']}]
         }]
 
     }
